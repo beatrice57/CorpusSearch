@@ -8,6 +8,8 @@ The original documentation (available at
 <https://corpussearch.sourceforge.net/>) is no longer being maintained
 and is superseded by the version here.
 
+Contact: Beatrice Santorini (beatrice DOT santorini AT gmail DOT com).
+
 License
 =======
 
@@ -18,4 +20,3 @@ The documentation is distributed under Creative Commons License
 Attribution-NonCommercial-ShareAlike 4.0 International CC BY-NC-SA 4.0
 (<https://creativecommons.org/licenses/by-nc-sa/4.0>).
 
-Contact: Beatrice Santorini (beatrice DOT santorini AT gmail DOT com).

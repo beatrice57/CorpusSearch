@@ -1,5 +1,8 @@
-The files in this repository are distributed under Creative
-Commons License Attribution-NonCommercial-ShareAlike 4.0 International
-CC BY-NC-SA 4.0 (<https://creativecommons.org/licenses/by-nc-sa/4.0/>).
+For conditions of use on the program, please consult the download site
+(<https://sourceforge.net/projects/corpussearch/>).
+
+The documentation is distributed under Creative Commons License
+Attribution-NonCommercial-ShareAlike 4.0 International CC BY-NC-SA 4.0
+(<https://creativecommons.org/licenses/by-nc-sa/4.0>).
 
 

@@ -1,0 +1,157 @@
+<!doctype html><!--DONE-->
+<html>
+<head>
+<link rel="stylesheet" href="manual.css">
+<title>What's new in CorpusSearch 2</title>
+</head>
+
+<body>
+
+<a name="top">
+<h2>What's new in CorpusSearch 2</h2>
+
+<ul>
+<li>New
+    <ul>
+    <li><a href="search-functions.html#dominates" target=_"new">Search functions</a>
+        <ul>
+        <li><a href="search-functions.html#dominates" target=_"new">dominates</a>
+        <li><a href="search-functions.html#hasSister" target=_"new">hasSister</a>
+        <li><a href="search-functions.html#iDomsMod" target=_"new">iDomsMod</a>
+        <li><a href="search-functions.html#isRoot" target=_"new">isRoot</a>
+        <li><a href="search-functions.html#sameIndex" target=_"new">sameIndex</a>
+        </ul>
+    <li><a href="#node">Boundary nodes</a>
+        <ul>
+        <li><a href="command-file.html#root" target=_"new">$ROOT</a>
+        <li><a href="command-file.html#metaroot" target=_"new">METAROOT</a>
+        </ul>
+    <li><a href="#print">Print commands</a>
+        <ul>
+        <li><a href="coding.html#print_only" target=_"new">print_only</a>
+        <li><a href="command-file.html#reformat" target=_"new">reformat_corpus</a>
+        </ul>
+    <li><a href="#functionality">Functionality</a>
+        <ul>
+        <li><a href="frames.html" target=_"new">Local frames</a>
+        <li><a href="lexicon.html" target=_"new">Lexicon building</a>
+        <li><a href="revision.html" target=_"new">Automated corpus revision</a>
+        </ul>
+    <li><a href="#log-ops">Logical operators</a> (deprecated)
+        <ul>
+        <li><a href="query-language.html#NOT" target=_"new">NOT</a>
+        <li><a href="query-language.html#OR" target=_"new">OR</a>
+        </ul>
+    </ul>
+
+<li>Changes
+    <ul>
+    <li><a href="#changes-ordinary">Ordinary queries</a>
+    <li><a href="#changes-coding">Coding queries</a>
+</ul>
+
+<li><a href="#discontinued">Discontinued functions</a>
+
+</ul>
+
+<p>
+<hr>
+
+<a name="changes-ordinary">
+<h3>Changes in ordinary queries</h3>
+
+<ul>
+<li>In CorpusSearch 1, consecutive queries had to be appended one at a time:
+
+<blockquote>
+<pre>
+query:  ((((A function B) 
+       AND (C function D)) 
+       AND (E function F)) 
+       AND (G function H))
+</pre>
+</blockquote>
+
+In CorpusSearch 2, queries can be appended with any logical combination
+of parentheses.  The above query is more easily written:
+
+<blockquote>
+<pre>
+query:     (A function B)
+       AND (C function D)
+       AND (E function F)
+       AND (G function H)
+</pre>
+</blockquote>
+
+Old-style queries continue to be interpreted correctly.
+
+<!--
+<p>
+<li>These search functions have new algorithms:
+
+<ul>
+<li><a href="search-functions.html#iPrecedes" target=_"new">iPrecedes</a>
+<li><a href="search-functions.html#precedes" target=_"new">Precedes</a>
+</ul>
+-->
+
+<p>
+<li>Search functions that take an integer argument are now written with a
+space before the argument.  For example:
+
+<blockquote>
+<pre>
+query: (CODING column 2 q)
+</pre>
+</blockquote>
+
+instead of:
+
+<blockquote>
+<pre>
+query: (CODING column2 q)      &larr; OBSOLETE
+</pre>
+</blockquote>
+
+This change affects the following functions:
+
+<p>
+<ul>
+<li><a href="search-functions.html#column" target=_"new">column</a>
+<li><a href="search-functions.html#domsWords" target=_"new">domsWords</a>,
+    <a href="search-functions.html#domsWordsLessThan" target=_"new">domsWords<</a>,
+    <a href="search-functions.html#domsWordsMoreThan" target=_"new">domsWords></a>
+<li><a href="search-functions.html#iDomsNumber" target=_"new">iDomsNumber</a>
+<li><a href="search-functions.html#iDomsTotal" target=_"new">iDomsTotal</a>,
+    <a href="search-functions.html#iDomsTotalLessThan" target=_"new">iDomsTotal<</a>,
+    <a href="search-functions.html#iDomsTotalMoreThan" target=_"new">iDomsTotal></a>
+</ul>
+
+</ul>
+
+<a name="changes-coding">
+<h3>Changes in coding queries</h3>
+
+<ul>
+<li>Coding can now be performed once per boundary node, instead of once
+per sentence token.
+
+<p>
+<li>The "coding_query" command must now precede the body of the coding query.
+</ul>
+
+<a name="discontinued">
+<h3>Discontinued functions</a></h3>
+
+<ul>
+<li>anyPrecedes (superseded
+    by <a href="search-functions.html#precedes" target=_"new">precedes</a>)
+<li>iDoms_conj_switch (superseded
+    by <a href="search-functions.html#iDomsMod" target=_"new">iDomsMod</a>)
+<li>print_complement (superseded
+    by <a href="query-language.html#NOT" target=_"new">NOT</a>)
+</ul>
+
+</body>
+</html>

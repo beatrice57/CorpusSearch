@@ -1,0 +1,37 @@
+<!doctype html><!--DONE-->
+<html>
+<head>
+<link rel="stylesheet" href="manual.css">
+<title>List of tags</title>
+</head>
+
+<body>
+
+<a name="top">
+<h2>List of tags</h2>
+
+<a name="make_tag_list">
+<h3>make_tag_list</h3>
+
+A command file consisting of the following line:
+
+<blockquote>
+<pre>
+make_tag_list: t
+</pre>
+</blockquote>
+
+compiles a list of tags in a corpus.  A node specification is unnecessary
+and is ignored.
+
+<p>
+In the output, the tags are divided into POS tags and syntactic tags.
+More precisely, the division is into preterminals and higher nodes.  POS
+tags can therefore appear on the list of syntactic tags if they occur
+recursively (as they do, say, in conjunction contexts).
+
+<p>
+Like any other command file, a tag list query must end in <b>.q</b>.  The
+output is written to a <b>.tag</b> file.
+
+</body>

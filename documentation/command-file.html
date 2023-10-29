@@ -1,0 +1,1101 @@
+<!doctype html><!--DONE-->
+<html>
+<head>
+<link rel="stylesheet" href="manual.css">
+<title>The command file</title>
+</head>
+
+<body>
+
+<a name="top">
+<h2>The command file</h2>
+
+<ul>
+<li><a href="#introduction">Introduction</a>
+<li><a href="#boolean">Notational variants for Boolean values</a>
+<li>Preamble
+    <ul>
+    <li><a href="#node">Node specification
+    <li><a href="#ignore">Ignoring nodes in searches</a>
+        <ul>
+        <li><a href="#ignore_nodes">ignore_nodes</a>
+        <li><a href="#add_to_ignore">add_to_ignore</a>
+        <li><a href="#ignore_words">ignore_words</a>
+        <li><a href="#add_to_ignore_words">add_to_ignore_words</a>
+        </ul>
+    <li><a href="#corpus_encoding">Corpus encoding</a>
+    <li><a href="#output_format">Output format commands</a>
+        <ul>
+        <li><a href="#remark">begin_remark, end_remark</a>
+        <li><a href="#nodes_only">nodes_only</a>
+        <li><a href="#print_complement">print_complement</a>
+        <li><a href="#print_indices">print_indices</a>
+        <li><a href="#remove_nodes">remove_nodes</a>
+        <li><a href="#ur_text_only">ur_text_only</a>
+        <li>See also:
+            <ul>
+            <li><a href="revision.html#copy_corpus" target="_new">copy_corpus</a> 
+                <!--(in <a href="revision.html" target="_new">Corpus revision</a>)-->
+            <li><a href="coding.html#print_only" target="_new">print_only</a>
+                <!-- (in <a href="coding.html" target="_new">Coding</a>)-->
+            </ul>
+        </ul>
+    </ul>
+<li><a href="#command-spec">Command specification</a>
+<li><a href="#comments">Comments</a>
+<li>See also:
+        <ul>
+        <li><a href="coding.html" target="_new">Coding</a>
+        <li><a href="revision.html" target="_new">Corpus revision</a>
+        <li><a href="lexicon.html" target="_new">Lexicon creation</a>
+        <li><a href="frames.html" target="_new">Local frames</a>
+        </ul>
+</ul>
+
+<p>
+<hr>
+
+<a name="introduction">
+<h3>Introduction</h3>
+
+<p>
+In this section, we present the most basic type of a CorpusSearch command
+file: the ordinary query file.  Other types of command files are similar
+in form, but have different functions, and it is convenient to discuss
+them separately:
+
+<ul>
+<li><a href="coding.html" target="_new">Coding</a>
+<li><a href="revision.html" target="_new">Corpus revision</a>
+<li><a href="lexicon.html" target="_new">Lexicon creation</a>
+<li><a href="frames.html" target="_new">Local frames</a>
+</ul>
+
+Ordinary query files must have names ending in the extension <b>.q</b>.
+By default, their output has the same basename as the query file, but the
+extension is <b>.out</b>.  The basename of the output file (but not the
+.out extension) can be changed with an "-out" switch</a> on the
+command line (see
+<a href="installing.html#out-switch" target="_new">Installing
+CorpusSearch</a>).
+
+<a name="preamble">
+<p>
+The command file for an ordinary CorpusSearch query has the following
+schematic form.  Obligatory components are underlined:
+
+<blockquote>
+<ul>
+<li>Preamble
+    <ul>
+    <li><u>Node specification</u>
+    <li>"Ignore" commands
+    <li>Output format commands
+    <li>Reference to a <a href="def.html" target="_new">definition file</a>
+    </ul>
+<li><u>Command specification</u>
+</ul>
+</blockquote>
+
+Here is an example:
+
+<p>
+<blockquote>
+<pre>
+// node specification
+node: IP-MAT*
+
+// "ignore" command
+ignore_nodes: null
+
+// output specification
+print_indices: t
+
+// definition file
+define: mideng.def
+
+// command specification - find short examples for slides
+query: (IP-MAT* iDomsTotal< 10)
+</pre>
+</blockquote>
+
+<p>
+The commands in the preamble must all precede the search specification,
+but the various components of the preamble can appear in any order.  They
+are read in order.  This means that the node specification can reference a
+label from a <a href="def.html" target="_new">definition file</a>, but
+only if "define:" precedes "node:" in the command file.
+
+<a name="boolean">
+<h3>Notational variants for Boolean values</h3>
+
+CorpusSearch allows the following notational variants for Boolean values:
+
+<p>
+<table>
+<tr>
+<td>true
+<td>t, true, T, TRUE
+<tr>
+<td>false
+<td>f, false, F, FALSE
+</table>
+
+<a name="node">
+<a name="root">
+<a name="metaroot">
+<h3>Node specification</h3>
+
+<p>
+<table>
+<tr>
+<td><img src="hand.GIF">
+<td>The issue of node choice is perhaps less confusing than it used to be
+    given the advent of coding queries, where the effects of node choice
+    are more transparent.
+</table>
+
+<p>
+The "node" command specifies the search domain within which CorpusSearch
+attempts to execute the search specification.  Possible values for the
+node specification are:
+
+<ul>
+<li>$ROOT, a variable that stands for the root node of a sentence token,
+    whatever its label may be and even when it has no
+    label. (See <a href="#nodes_only">nodes_only</a> for the effect of
+    that command on the value of $ROOT in subsequent searches.)
+<p>
+<li>$METAROOT, the mother of $ROOT, which generally has no label.  The
+    associated parens are known as wrapper parens.  A common use for
+    $METAROOT is to check whether every sentence token has an associated
+    ID node.
+<p>
+<li>a literal node label in the corpus
+<p>
+<li>a <a href="query-language.html#reg-exps" target="_new">regular expression</a>
+    referring to a set of node labels in the corpus
+<p>
+<li>an expression defined in the <a href="def.html" target="_new">definition file</a>
+    (in this case, "define:" must precede "node:" in the preamble)
+</ul>
+
+The choice of node boundary determines the following:
+
+<ul>
+<li>how hits are counted, hits being defined as "number of distinct node
+    boundaries matching the query"
+<li>which nodes are removed if <a href="#remove_nodes">remove_nodes</a>
+    is true
+<li>which nodes are printed if <a href="#nodes_only">nodes_only</a> is true
+</ul>
+
+We illustrate this by running the same query on the same simple
+sentence, but with different node boundaries.  Given the following query:
+
+<blockquote>
+<pre>
+node: IP-MAT*
+
+query: (NP* iDoms PRO*)
+</pre>
+</blockquote>
+
+CorpusSearch counts 1 hit because even though there are 2 NP* nodes that
+match the query, they are contained within a single instance of IP-MAT*.
+
+<blockquote>
+<pre>
+/~*
+and he made them grete chere out of mesure
+(CMMALORY,2.13)
+*~/
+/*
+1 IP-MAT:  4 NP-SBJ, 5 PRO
+1 IP-MAT:  9 NP-OB2, 10 PRO
+*/
+(0 (1 IP-MAT (2 CONJ and)
+	     (4 NP-SBJ (5 PRO he))
+	     (7 VBD made)
+	     (9 NP-OB2 (10 PRO them))
+	     (12 NP-OB1 (13 ADJ grete) (15 N chere))
+	     (17 ADVP (18 ADV out)
+		      (20 PP (21 P of)
+			     (23 NP (24 N mesure)))))
+  (26 ID CMMALORY,2.13)) 
+
+/*
+SUMMARY:  
+source files, hits/tokens/total
+  CMMALORY			1/1/1
+whole search, hits/tokens/total
+				1/1/1
+*/
+</pre>
+</blockquote>
+
+Running the same query with node boundary NP* yields a different result:
+
+<blockquote>
+<pre>
+node: NP*
+
+query: (NP* iDoms PRO*)
+</pre>
+</blockquote>
+
+Now CorpusSearch counts 2 hits, because each of the 2 instances of NP*
+is an instance of the node boundary:
+
+<blockquote>
+<pre>
+/~*
+and he made them grete chere out of mesure
+(CMMALORY,2.13)
+*~/
+/*
+4 NP-SBJ:  4 NP-SBJ, 5 PRO
+9 NP-OB2:  9 NP-OB2, 10 PRO
+*/
+(0 (1 IP-MAT (2 CONJ and)
+	     (4 NP-SBJ (5 PRO he))
+	     (7 VBD made)
+	     (9 NP-OB2 (10 PRO them))
+	     (12 NP-OB1 (13 ADJ grete) (15 N chere))
+	     (17 ADVP (18 ADV out)
+	              (20 PP (21 P of)
+		             (23 NP (24 N mesure)))))
+    (26 ID CMMALORY,2.13))
+/*
+SUMMARY:  
+source files, hits/tokens/total
+  CMMALORY		2/1/1
+whole search, hits/tokens/total
+			2/1/1
+*/
+</pre>
+</blockquote>
+
+The way that CorpusSearch counts hits in this case becomes particularly
+clear if we set "<a href="#nodes_only">nodes_only</a>" to "true":
+
+<blockquote>
+<pre>
+node: NP*
+
+nodes_only: t
+
+query: (NP* iDoms PRO*)
+</pre>
+</blockquote>
+
+This yields the following output:
+
+<blockquote>
+<pre>
+/~*
+and he made them grete chere out of mesure
+(CMMALORY,2.13)
+*~/
+/*
+4 NP-SBJ:  4 NP-SBJ, 5 PRO
+9 NP-OB2:  9 NP-OB2, 10 PRO
+*/
+( (4 NP-SBJ (5 PRO he))
+  (26 ID CMMALORY,2.13)) 
+
+( (9 NP-OB2 (10 PRO them))
+  (26 ID CMMALORY,2.13)) 
+/*
+SUMMARY:  
+source files, hits/tokens/total
+  CMMALORY		2/1/1
+whole search, hits/tokens/total
+			2/1/1
+*/
+</pre>
+</blockquote>
+
+<a name="ignore">
+<h3>Ignoring nodes in searches</h3>
+
+Certain node labels in the corpus indicate metalinguistic or other
+information that should generally not be considered in searches.  For
+instance, an intervening editorial comment, line break, page number, and
+the like should not affect searches involves immediate precedence.  It is
+also often (though not always) desirable to ignore punctuation, traces,
+other empty categories, and clitics.  Some of these items should also
+generally be ignored when counting the number of words in a constituent.
+In deciding whether a given structure in the corpus matches a query,
+CorpusSearch ignores nodes with labels on the
+"<a href="#ignore_nodes">ignore_nodes</a>" list.  In connection with
+<a href="search-functions.html#domsWords" target="_new">domsWords</a> and
+its variants, CorpusSearch uses the
+"<a href="#ignore_words">ignore_words</a>" list instead.  Labels can be
+added to these lists using "<a href="#add_to_ignore">add_to_ignore</a>"
+and "<a href="#add_to_ignore_words">add_to_ignore_words</a>",
+respectively, or they can be revised more extensively (including the
+option of not ignoring any nodes or words), as discussed under the
+commands at issue.  Any of the commands mentioned in this paragraph can be
+specified in the <a href="pref.html" target="_new">preference file</a> or
+in individual command files, where, as usual, they override any preference
+file specifications.
+
+<p>
+The following table is intended as a convenient summary of the commands in
+this section.  For more details, see the entries for the individual
+commands.
+
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td colspan=3>The spaces setting off the alternatives in the following
+    table are intended to improve legibility; they need to be omitted in
+    an actual query (or they will abort the search).
+</table>
+
+<p>
+<table>
+<tr>
+<th align="left">Command
+<th align="left">In conjunction with ...
+<th align="left">Default value
+<tr>
+<td><a href="#ignore_words">ignore_words</a>
+<td><a href="search-functions.html#domsWords" target="_new">domsWords</a>
+and variants
+<td>CODE | COMMENT | E_S | ID | LB | RMV:* | ' | \" | , | \. | / | 0 | \**
+<tr>
+<td><a href="#ignore_nodes">ignore_nodes</a>
+<td>all other commands
+<td>same as above, but not the last two items 
+<tr>
+<td><a href="#add_to_ignore_words">add_to_ignore_words</a>
+<td>ignore_words
+<td rowspan=2>no default
+<tr>
+<td><a href="#add_to_ignore">add_to_ignore</a>
+<td>ignore_nodes
+</table>
+
+<a name="ignore_nodes">
+<h4>ignore_nodes: {list_of_labels}</h4>
+
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td>The spaces setting off the alternatives in the following list are
+    intended to improve legibility; they need to be omitted in an actual
+    query (or they will abort the search).
+</table>
+
+<p>
+<b>Default:</b> COMMENT | CODE | E_S | ID | LB | RMV:* | ' | \" | , | \. | / 
+
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td>In some corpora, punctuation is tagged as, say, PUNC or PON or PONFP.
+    Those tags are not on the default "ignore_nodes" list, and so they
+    must be added to the list by the user (best in the <a href="pref.html"
+    target="_new">preference file</a>).
+</table>
+
+<p>
+"ignore_nodes" tells CorpusSearch to ignore the specified nodes in
+connection with all search functions except for
+<a href="search-functions.html#domsWords">domsWords</a> and its
+variants.  (For the latter, CorpusSearch uses the list specified
+by <a href="command-file.html#ignore_words">ignore_words</a>.)  For
+instance, running this query:
+
+<blockquote>
+<pre>
+(NP* iPrecedes PP*)
+</pre>
+</blockquote>
+
+returns the following sentence despite the CODE node intervening between
+NP-1 and PP.  This is because the label "CODE" is on the default
+"ignore_nodes" list.
+
+<blockquote>
+<pre>
+/*
+1 IP-MAT-SPE: 5 NP-1, 9 PP
+*/
+/~*
+There ar two bretheren beyond the see,
+(CMMALORY,15.439)
+*~/
+
+(0 (1 IP-MAT-SPE (2 NP-SBJ-1 (3 EX There))
+                 (5 BEP ar)
+                 (7 NP-1 (8 NUM two) (10 NS bretheren))
+                 (12 CODE &lt;P_15>)
+                 (14 PP (15 P beyond)
+                        (17 NP (18 D the) (20 N see)))
+                 (22 E_S ,))
+   (24 ID CMMALORY,15.439))
+</pre>
+</blockquote>
+
+<p>
+You can replace the default list with a list of your own choosing, and
+you can also tell CorpusSearch not to ignore any nodes with this
+command:
+
+<blockquote>
+<pre>
+ignore_nodes: null
+</pre>
+</blockquote>
+
+<a name="vorrei-e-non-vorrei">
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td>If your query makes reference to an item on your "ignore_nodes" list,
+    CorpusSearch will not issue a warning.  The only indication you will
+    get of the incoherent character of your query is the puzzling absence
+    of hits in the output, as illustrated in what follows.
+</table>
+
+<p>
+Here is an example of an incoherent query that makes reference to a node
+on the ignore_nodes list:
+
+<blockquote>
+<pre>
+node:   IP*
+
+ignore_nodes: NP*
+
+query:  (NP* iDoms PRO*)
+</pre>
+</blockquote>
+
+Running the query on the following input:
+
+<blockquote>
+<pre>
+(0 (1 IP-MAT (2 CONJ and)
+	     (4 NP-SBJ (5 PRO he))
+	     (7 VBD made)
+	     (9 NP-OB2 (10 PRO them))
+	     (12 NP-OB1 (13 ADJ grete) (15 N chere))
+	     (17 ADVP (18 ADV out)
+	              (20 PP (21 P of)
+		             (23 NP (24 N mesure)))))
+    (26 ID CMMALORY,2.13))
+</pre>
+</blockquote>
+
+yields an output file without any hits.
+
+<blockquote>
+<pre>
+node:  IP*
+query:  (NP* iDoms PRO*) 
+*/
+/*
+HEADER:
+source file:  CMMALORY
+*/
+/*
+FOOTER
+  source file, hits/tokens/total
+  CMMALORY		0/0/1
+*/
+/*
+SUMMARY:  
+source files, hits/tokens/total
+  CMMALORY		0/0/1
+whole search, hits/tokens/total
+			0/0/1
+*/
+</pre>
+</blockquote>
+
+<p> This is because CorpusSearch is literally following your instruction
+to ignore all NP* nodes, including the NP* nodes with node addresses 4 and
+9, which would otherwise match the query.
+
+<a name="add_to_ignore">
+<h4>add_to_ignore: {list_of_labels}</h4>
+
+<b>Default:</b> n/a
+
+<p>
+"add_to_ignore" adds nodes to the "ignore_nodes" list (whether the default
+list or your own).  For instance:
+
+<blockquote>
+<pre>
+add_to_ignore: INTJ*              &larr; "add_to_ignore", not "add_to_ignore_nodes"
+</pre>
+</blockquote>
+
+<a name="ignore_words">
+<h4>ignore_words: {list_of_labels} </h4>
+
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td colspan=3>The spaces setting off the alternatives in the following
+    list are intended to improve legibility; they need to be omitted in an
+    actual query (or they will abort the search).
+</table>
+
+<p>
+<b>Default:</b> COMMENT | CODE | E_S | ID | LB | RMV:* | ' | \" | , | \. | / | 0 | \**
+
+<p>
+"ignore_words" tells CorpusSearch what nodes to ignore when counting words
+in connection with <a href="search-functions.html#domsWords"
+target="_new">domsWords</a> and its variants.  (For all other search
+functions, CorpusSearch uses the list specified
+in <a href="#ignore_nodes">ignore_nodes</a>.)  The default list for
+"ignore_words" is the same list as for "ignore_nodes", except that it also
+includes "0" and traces and empty categories (expressions beginning with
+asterisk).  Nodes on the "ignore_words" list can be terminals or
+preterminals (in other words, either elements of the text itself or their
+associated POS tag).
+
+<p>
+As with the <a href="#ignore_nodes">ignore_nodes</a> list, you can edit
+the "ignore_words" list, replacing the default list with a list of your
+own or with the value "null" (if you want to count all terminal nodes in
+the text, without ignoring any).
+
+<a name="add_to_ignore_words">
+<h4>add_to_ignore_words: {list_of_labels} </h4>
+
+<b>Default:</b> n/a
+
+<p>
+"add_to_ignore_words" add nodes to the "ignore_words" list (whether the
+default list or your own).  For instance:
+
+<blockquote>
+<pre>
+add_to_ignore_words: [oO]h
+</pre>
+</blockquote>
+
+<a name="corpus_encoding">
+<h3>Corpus encoding</h3>
+
+<b>Default:</b> corpus_encoding: US-ASCII
+
+<p>
+CorpusSearch also supports ISO-LATIN-1 (a.k.a ISO-8859-1), UTF-8, and UTF-16.
+
+<a name="output_format">
+<h3>Output format commands</h3>
+
+Output format commands control how search results are printed to the
+output file.  They do not influence the results of a current search.
+However, because they can cause the output of the current search to
+include certain nodes or not, they may influence the contents of
+searches that depend on the output of the current one.
+
+<p>
+The following table is intended as a convenient summary of the commands
+in this section.  For more details, see the entries for the individual
+commands.
+
+<p>
+<table>
+<tr>
+<th>Command
+<th>Default value
+<tr>
+<td><a href="#remark">begin_remark ... end_remark</a>
+<td align=center>n/a
+<tr>
+<td><a href="#nodes_only">nodes_only</a>
+<td rowspan=5>false
+<tr>
+<td><a href="#print_complement">print_complement</a>
+<tr>
+<td><a href="#print_indices">print_indices</a>
+<tr>
+<td><a href="#remove_nodes">remove_nodes</a>
+<tr>
+<td><a href="#ur_text_only">ur_text_only</a>
+</table>
+
+<a name="remark">
+<h4>begin_remark: {remark string} end_remark</h4>
+
+<b>Default:</b> n/a
+
+<p>
+This two-part command tells CorpusSearch to print a remark in the
+preface to the output; for instance, a note about the purpose of a
+particular search.  The following command:
+
+<blockquote>
+<pre>
+begin_remark: 
+pronoun objects
+end_remark
+</pre>
+</blockquote>
+
+would give rise to an output preface as follows:
+
+<blockquote>
+<pre>
+/*
+    PREFACE:  regular output file.
+    CorpusSearch copyright Beth Randall 1999.
+    Date:  Wed Nov 03 19:12:03 EST 1999
+
+    command file:       pro-obj.q
+    input file:         ip-mat-2vb.out
+    output file:        pro-obj.out
+
+    remark:
+        pronoun objects
+
+    node:   IP*
+    query:  (NP-OB* iDoms PRO)
+*/
+</pre>
+</blockquote>
+
+<a name="nodes_only">
+<h4>nodes_only: (Boolean true or false) </h4>
+
+<b>Default:</b> false
+
+<p>
+<table>
+<tr>
+<td><img src="hand.GIF">
+<td>When the output of some initial search that
+    sets <a href="#nodes_only">nodes_only</a> to "true" becomes the input
+    to subsequent searches, $ROOT in the subsequent searches refers to the
+    root of the output trees, whose label is determined by (though not
+    necessarily identical with) the <a href="#node">node boundary</a> of
+    the initial search.
+</table>
+
+<p>
+If "nodes_only" is set to true, CorpusSearch prints out only
+the <a href="#node">nodes</a> that match the query.  If it is set to
+false, CorpusSearch prints out the entire sentence token containing the
+structure matching the query.  For instance, with the default value of
+"false", the following query:
+
+<blockquote>
+<pre>
+node: ADVP*
+
+nodes_only: f
+
+query:  (ADVP* iDoms ADVP*)
+</pre>
+</blockquote>
+
+gives the following output:
+
+<blockquote>
+<pre>
+/~*
+certayn and wit-owte doute, Ihon is is name.
+(CMAELR3,45.589)
+*~/
+
+/*
+2 ADVP: 3 ADVP
+*/
+
+(0 (1 IP-MAT (2 ADVP (3 ADVP (4 ADV certayn))
+                     (6 CONJP (7 CONJ and)
+                              (9 PP (10 P wit-owte)
+                                    (12 NP (13 N doute)))))
+             (15 , ,)
+             (16 NP-OB1 (17 NPR Ihon))
+             (19 BEP is)
+             (21 NP-SBJ (22 PRO$ is) (24 N name))
+             (26 E_S .))
+  (28 ID CMAELR3,45.589))
+</pre>
+</blockquote>
+
+The output for the same query, but with "nodes_only" set to "true",
+looks like this:
+
+<blockquote>
+<pre>
+/~*
+certayn and wit-owte doute, Ihon is is name.
+(CMAELR3,45.574)
+*~/
+
+/*
+2 ADVP: 3 ADVP
+*/
+
+(0 (2 ADVP (3 ADVP (4 ADV certayn))
+           (6 CONJP (7 CONJ and)
+               	    (9 PP (10 P wit-owte)
+             	          (12 NP (13 N doute))))
+   (15 , ,))
+   (28 ID CMAELR3,45.574))
+</pre>
+</blockquote>
+
+<a name="print_complement">
+<h4>print_complement: (Boolean true or false)</h4>
+
+<b>Default:</b> false
+
+<p>
+<table>
+<tr>
+<td><img src="hand.GIF">
+<td>The effect of "print_complement" can now be achieved (more easily and
+    transparently) with <a href="coding.html" target="_new">coding
+    queries</a>, notably with the ELSE condition.
+</table>
+
+<p>
+CorpusSearch ordinarily outputs only nodes or tokens that match the
+search specification.  Setting "print_complement" to "true" causes
+CorpusSearch to print the matching tokens to the regular output file
+(with the extension <b>.out</b>) and also all the tokens that don't
+match to a separate complement file (with the extension <b>.cmp</b>).
+In other words, "print_complement" applies logical NOT to an entire
+query.
+
+<p>
+For instance, the following query could be used on an input file
+containing all IPs with objects in order to divide those IPs into two
+complementary sets: those with two objects (in the .out file) and the
+remainder (with at most one object).
+
+<blockquote>
+<pre>
+print_complement: t
+
+node: IP*
+
+query:    (IP* iDoms NP-OB1)
+      AND (IP* iDoms NP-OB2)
+</pre>
+</blockquote>
+
+Here is an example from the regular output file.  It matches the query
+and has two objects:
+
+<pre>
+/~*
+And there is no knyght now lyvynge that ought to yelde God so grete thanke os ye,
+(CMMALORY,655.4474)
+*~/
+/*
+1 IP-SUB-SPE: 10 NP-OB2, 13 NP-OB1
+1 IP-SUB-SPE: 13 NP-OB1, 10 NP-OB2
+*/
+
+(0 (1 IP-SUB-SPE (2 NP-SBJ *T*-2)
+                 (4 MD ought)
+                 (6 TO to)
+                 (8 VB yelde)
+                 (10 NP-OB2 (11 NPR God))
+                 (13 NP-OB1 (14 ADJP (15 ADVR so) (17 ADJ grete))
+                            (19 N thanke)
+                            (21 PP (22 P os)
+                                   (24 NP (25 PRO ye)))))
+   (27 ID CMMALORY,655.4474))
+</pre>
+</blockquote>
+
+And here is an example from the complement file.  It has only one object
+and so fails to match the query.
+
+<blockquote>
+<pre>
+/~*
+The kynge lyked and loved this lady wel,
+(CMMALORY,2.12)
+*~/
+
+(0 (1 IP-MAT (2 NP-SBJ (3 D The) (5 N kynge))
+             (7 VBD (8 VBD lyked) (10 CONJ and) (12 VBD loved))
+             (14 NP-OB1 (15 D this) (17 N lady))
+             (19 ADVP (20 ADV wel))
+             (22 E_S ,))
+   (24 ID CMMALORY,2.12))
+</pre>
+</blockquote>
+
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td>The "print_complement" command should only be used on the output of a
+    previous search that has yielded some set that it is sensible to
+    divide into two complementary subsets.  Using a query with
+    "print_complement" on an entire corpus will generally result in a .cmp
+    file consisting of a grab bag of tokens without any theoretical
+    significance.
+</table>
+
+<a name="print_indices">
+<h4>print_indices: (Boolean true or false)</h4>
+
+<b>Default:</b> false
+
+<p>
+"print_indices" tells CorpusSearch whether to print node address indices
+in the output.  Node address indices should not be confused
+with <a href="query-language.html#prefix-indices" target="_new">prefix
+indices</a> (though prefix indices use addresses to fix the reference of
+search arguments).  Node address indices start at 0
+for <a href="#metaroot">$METAROOT</a> and systematically label every node
+in the tree, including the word (terminal nodes).  By convention,
+addresses for terminals are not printed even when "print_indices" is set
+to "true".
+
+<p>
+Here's a piece of output structure with and without node addresses:
+
+<blockquote>
+<pre>
+(10 NP-OB1 (11 NPR Morgan)     &larr; indices 12 "Morgan", 14 "le", 16 "Fay" omitted by convention
+           (13 NPR le)
+           (15 NPR Fay))
+
+(NP-OB1 (NPR Morgan)
+        (NPR le)
+        (NPR Fey))
+</pre>
+</blockquote>
+
+Output including index queries can be a bit cumbersome to read, but when
+troubleshooting a query that isn't having the intended effect, indices
+in the tree structures are invaluable pointers for understanding what
+CorpusSearch is matching and where the query needs to be revised.  This
+is also true more generally in connection with complex queries or with
+corpora with very long sentence tokens.
+
+<a name="remove_nodes">
+<h4>remove_nodes: (Boolean true or false)</h4>
+
+<b>Default:</b> false
+
+<p>
+"remove_nodes" removes subtrees rooted in the same syntactic category as
+the node boundary when the subtrees are themselves dominated by an
+instance of that category (see below for details as to what counts as
+the "same").  The removed subtree is replaced by a label indicating the
+material that has been removed.  If the removed subtree itself matches
+the query, it will appear in its complete form as a separate output
+token later in the output file.
+
+<p>
+CorpusSearch determines the syntactic category of the nodes to be removed
+according to the following algorithm:
+
+<p>
+<ul>
+<li>If the node boundary label contains any hyphens, the node's
+    syntactic category is the substring of the label up to the leftmost
+    hyphen, followed by an asterisk.
+<li>If the node boundary label does not contain a hyphen, but does
+    contain a trailing asterisk, the label is used as is.  
+<li>If the node boundary label contains neither a hyphen nor a trailing
+    asterisk, an asterisk is appended to the label.
+</ul>
+
+<p>
+For instance, all of the following node boundaries - IP-MAT-PRN*, IP*,
+IP - yield IP* as the syntactic category to be removed.
+
+<p>
+<table>
+<tr>
+<td><img src="caution.GIF">
+<td>All NP node boundaries yield NP* as the node to be removed.  In
+    addition to matching NPs, this will also match the POS tag NPR, which
+    is likely not intended.  To avoid this problem, add a hyphen ("NP-*")
+    to the node boundary.  A more radical solution is to replace "NPR" by
+    a non-interfering label like "NR" 
+    via a <a href="revision.html" target="_new">revision query</a> or a
+    sed script.
+</table>
+
+<p>
+In the following command file, "remove_nodes" is set to "true":
+
+<blockquote>
+<pre>
+node: IP*
+
+remove_nodes: true
+
+query: (NP-OB* iDoms PRO)
+</pre>
+</blockquote>
+
+<p>
+Running it on the following input
+
+<blockquote>
+<pre>
+( (IP-MAT (CONJ and)
+          (NP-SBJ *con*)
+          (VBD counceilled)
+          (NP-OB2 (PRO hym))
+          (IP-INF (TO to)
+                  (VB folowe)
+                  (NP-OB1 (PRO hem))
+                  (NP-MSR (ADJP (Q no) (ADJR further))))
+          (PUNC .))
+  (ID CMMALORY-M4,14.416))
+</pre>
+</blockquote>
+
+yields the following output:
+
+<blockquote>
+<pre>
+/~*
+and counceilled hym to folowe hem no further.
+(CMMALORY-M4,14.416)
+*~/
+/*
+1 IP-MAT:  8 NP-DTV, 9 PRO
+11 IP-INF:  16 NP-ACC, 17 PRO
+*/
+( (1 IP-MAT (2 CONJ and)
+            (4 NP-SBJ *con*)
+            (6 VBD counceilled)
+            (8 NP-OB2 (9 PRO hym))
+	    (11 IP-INF RMV:to_folowe_hem...)
+            (25 PUNC .))
+  (27 ID CMMALORY-M4,14.416))
+
+( (11 IP-INF (12 TO to)
+             (14 VB folowe)
+             (16 NP-OB1 (17 PRO hem))
+             (19 NP-MSR (20 ADJP (21 Q no) (23 ADJR further))))
+  (27 ID CMMALORY-M4,14.416))
+</pre>
+</blockquote>
+
+The structure of the infinitival IP "to folowe hem no further" is removed
+in the first hit and replaced with the label "RMV:{rmv_string}", where
+"rmv_string" stands for the concatenation of (up to) the first three words
+(terminal nodes) of the removed material.
+
+<!--
+<p>
+Further searches on the output file above will be able to search only
+IP* nodes with pronoun objects.  If "nodes_only" were set to "false",
+this restriction would not hold.
+-->
+
+<a name="ur_text_only">
+<h4>ur_text_only: (Boolean true or false)</h4>
+
+<b>Default:</b> false
+
+<p>
+"ur_text" refers to the text in its unannotated form.  "ur_text_only"
+prints only the ur_text of the tokens matching the query, suppressing
+printing of the labeled bracketing and associated information.
+
+<a name="command-spec">
+<a name="query">
+
+<h3>Command specification</h3>
+
+<a name="query">
+<h4>query</h4>
+
+Every command file must contain a command specification, which instructs
+CorpusSearch as to what action to carry out on the input.  The command
+specification for ordinary queries is:
+
+<blockquote>
+</pre>
+query: { condition(s) }
+</pre>
+</blockquote>
+
+The conditions contain one or
+more <a href="search-functions.html" target="_new">search functions</a> in accordance
+with the syntax of the CorpusSearch <a href="query-language.html" target="_new">query
+language</a>.
+
+<a name="reformat">
+<h4>reformat_corpus</h4>
+
+A command file consisting of only the following command specification
+(without a preamble):
+
+<blockquote>
+<pre>
+reformat_corpus: t
+</pre>
+</blockquote>
+
+normalizes the format of an input file (adjusting indentation, spacing,
+and so on).  The output has the extension <b>.fmt</b>, which is appended
+to the full name of the input file, including any existing extensions.
+
+<p>
+The "reformat_corpus" command can be thought of as applying a vacuous
+query to a file.  The result is an output file formatted according to the
+same rules as would apply with an ordinary query.
+
+<p>
+"reformat_corpus" is useful for following up with Unix "diff" when
+comparing two versions of the same file or corpus - say, before and after
+running a <a href="revision.html" target="_new">corpus revision query</a>.
+
+<a name="comments">
+<h3>Comments</h3>
+
+Comments may appear anywhere in a command file.  They are also allowed
+anywhere in the input file(s).
+
+<p>
+By default, single-line comments are introduced by "//", and multi-line
+comments (block comments) appear between "/*" and "*/".  These comment
+delimiters can be changed for input files, <u>but not for command
+files</u>.
+
+<p>
+The command "corpus_line_comment" changes the line comment delimiter.
+For instance:
+
+<blockquote>
+<pre>
+corpus_line_comment: \\
+</pre>
+</blockquote>
+
+The paired commands "corpus_comment_begin" and "corpus_comment_end" change
+the block comment delimiters.  For instance:
+
+<blockquote>
+<pre>
+corpus_comment_begin: <+
+corpus_comment_end: +>
+</pre>
+</blockquote>
+
+</body>
+</html>

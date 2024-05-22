@@ -13,7 +13,7 @@ Contact: Beatrice Santorini (beatrice DOT santorini AT gmail DOT com).
 License
 =======
 
-For conditions of use on the program, please consult the download site
+For conditions of use of the program, please consult the download site
 (<https://sourceforge.net/projects/corpussearch/>).
 
 The documentation is distributed under Creative Commons License

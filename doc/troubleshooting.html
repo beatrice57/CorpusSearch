@@ -143,34 +143,45 @@ CS query.q file.psd >& ERR
 <p>
 <h4>Mismatched parens</h4> 
 
-The most seriously ill-formed input involves mismatched parens, which
-generally arise from editing a parsed file with an ordinary text editor
-like emacs rather than with Annotald or a similar program.
+The most seriously ill-formed input involves mismatched parens.
+<!--which generally arise from editing a parsed file with an ordinary 
+text editor like emacs rather than with Annotald or a similar program.-->
 
 <ul>
-<li>When CorpusSearch encounters an unexpected mismatched right paren,
-it crashes, reporting details of the location.  These mismatched paren
-errors are easy to fix.  In the converse case of a missing right paren,
-however, CorpusSearch will unfortunately not break at the next wrapper
-paren.  Rather, it gobbles up the rest of the file.  In the case of a
-large file (as when correcting an entire corpus in a single text file),
-if you are piping to ERR, the ERR file can become humongous to the point
-of filling up your entire disk, leading to quite scary system error
-messages.  If this happens, kill the CS job, /bin/rm the ERR file, and
-locate the mismatched paren as described below.
+<li>When CorpusSearch encounters a <u>superfluous</u> right paren, it
+crashes and generates an error file (see <a href="installing.html#run">Running
+CorpusSearch</a> for details).  Using the information in the error file,
+these errors are easy to find and fix.
+
+<p>
+In the converse case of a <u>missing</u> right paren, CorpusSearch unfortunately
+does not crash at the next wrapper paren.  Rather, it keeps looking for a matching
+paren, continuing its search to the point of possibly gobbling up the entire rest
+of the file.  In the case of a large file (as when correcting an entire corpus in
+a single text file), if you are piping to an ERR file, that file can become so
+humongous that it fills up your entire disk, leading to quite scary system error
+messages.  If this happens, abort or kill the CS job, /bin/rm the ERR file, and
+locate the source of the error using standard debugging procedures (by <u>making a
+copy</u> of the input file</u>, preferably in a separate directory, and recursively
+partitioning into parts and finding the part(s) with the error).
+
+<p>
+A handy way to implement this standard procedure (again, on a <u>debugging
+copy</u>) using a text editor like emacs is is as follows:
+
+<p>
+<ul>
+<li>
+Use the emacs command <tt>forward-sexp</tt> (or the equivalent in your text editor
+of choice), which starts from some left paren and jumps to the corresponding right
+paren.  You can invoke the command on the mode line with <tt>M-x forward-sexp</tt>,
+or you can  bind the command to a sequence like <tt>C-x C-f</tt> in your .emacs file.  
+In what follows, we assume the latter.
 
 <p>
 <li>
-In order to find mismatched parens, use the emacs command "forward-sexp",
-which starts from some left paren and jumps to the corresponding right
-paren.  You can invoke the command on the mode line with "M-x
-forward-sexp", or you can bind the command to a sequence like "C-x C-f" in
-your .emacs file.  In what follows, we assume the latter.
-
-<p>
-<li>You can repeat "forward-sexp" arbitrarily many times by
-prefacing it with "C-u NUM", where "NUM" is the desired
-number of repetitions, as in the following line:
+You can repeat <tt>forward-sexp</tt> arbitrarily many times by prefacing it with
+<tt>C-u NUM</tt>, where <tt>NUM</tt> is the desired number of repetitions.
 
 <blockquote>
 <pre>
@@ -178,19 +189,22 @@ C-u 400 C-x C-f
 </pre>
 </blockquote>
 
-A command like the one just above will either go to completion or result
-in an error message.  If the latter, you know that the mismatched paren
-is somewhere between where you started the command and the expected end.
-
 <p>
-<li>Continued use of "C-x C-f" will allow you to zero in on the
-mismatched parens that are the problem.  Patience is the key.
+<li>
+A command of this form will either go to completion or result in an error message.
+So set a beginning mark at the beginning of your debugging file (by adding, say,
+"***" to the first token) and invoke the command with some <tt>NUM</tt>.  If the 
+command goes to completion, set a new beginning point at the beginning of the next 
+token and repeat.  If not, go back to the last beginning point and re-try with a 
+smaller <tt>NUM</tt>.  Recursively repeat whichever step is appropriate, and you will 
+eventually find the location of the missing paren.  Patience is the key.
+</ul>
 
 <p>
 <li>CorpusSearch sometimes erroneously reports mismatched parens in
 connection with certain characters, notably double quote.  A workaround is
-to replace the offending character, at least temporarily, by some innocous
-character sequence like "&lt;double-quote&gt;".
+to replace the offending character, at least temporarily, by some innocuous
+character sequence like <tt>&lt;double-quote&gt;</tt>.
 </ul>
 
 <p>
@@ -198,10 +212,10 @@ character sequence like "&lt;double-quote&gt;".
 <h4>Missing wrapper parens</h4>
 
 Wrapper parens are the unlabeled parens that delimit each token in Penn
-Treebank format, as shown in (1a).  If the wrapper parens are missing, the
-token looks like (1b), and you will have to add the relevant parens in
-order to meet the CorpusSearch's
-<a href="compatibility.html" target="_new">compatibility requirements</a>.
+Treebank format, as shown in (1a).  If the wrapper parens are missing, the 
+token looks like (1b), and you will have to add the relevant parens in order 
+to meet the CorpusSearch's <a href="compatibility.html" target="_new">compatibility 
+requirements</a>.
 
 <blockquote>
 <pre>

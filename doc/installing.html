@@ -45,9 +45,9 @@
 <li>Please be aware that if your operating system displays paths to you
     in a language other than English, it almost certainly still uses the
     English pathnames underlyingly.  For instance, on a Mac, a path
-    that <u>appears</u> to you as "/Applicazioni" or
-    "/Utenti/beatrice/Scrivania" will likely need to be specified by the
-    English "/Applications" or "/Users/beatrice/Desktop".
+    that <u>appears</u> to you as "Applicazioni" or
+    "Utenti/beatrice/Scrivania" will likely need to be specified by the
+    English "Applications" or "Users/beatrice/Desktop".
 
 <p>
 <li>The following item may be outdated.  We leave it up in case it
@@ -62,7 +62,7 @@
     <li>Search for the Command Prompt by clicking on the "Run" icon
         on the Start menu.
     <li>Enter "cmd" in the dialog box that comes up.
-    <li>Enter "C:\Documents and Settings\username>java -version" in
+    <li>Enter "C:\Documents and Settings\username>java -version" in 
         the Command Prompt dialog box that comes up.
     </ul>
 
@@ -171,7 +171,7 @@ first and the second argument (backward and forward, respectively).
 
 CorpusSearch is run from a terminal window (or "cmd" box) as described
 above.  It needs two arguments to run: a command file and one or more
-source files.  Assuming the alias "CS" defined in the previous section,
+source files.  Assuming an alias "CS" as defined in the previous section,
 the following command runs the query "foo.q" on the source file "bar.psd".
 
 <blockquote>
@@ -180,16 +180,19 @@ CS foo.q bar.psd
 </pre>
 </blockquote>
 
-The above command assumes that the command file and source files are in
-the same directory as the one from which you're invoking CorpusSearch.  If
-that is not the case, you need to specify full paths to the files in
-question.  For example:
+The above command assumes that the command file and source file are in the 
+same directory as the one from which you're invoking CorpusSearch.  That 
+will not generally be the case, and so you will need to specify full paths 
+to the files in question.  You can use absolute paths, relative paths, and 
+directory variables.  For example:
 
 <blockquote>
 <pre>
-CS /path/to/query/file/foo.q path/to/input/file/bar.psd
+CS /path/to/query/file/foo.q /path/to/source/file/bar.psd
 
 CS ../queries/foo.q ../../corpus/bar.psd
+
+CS ../$QUERY-DIR/foo.q $CORPUS-DIR/corpus/bar.psd
 </pre>
 </blockquote>
 
@@ -198,37 +201,32 @@ searched in a single run.
 
 <blockquote>
 <pre>
-CS foo.q a*.psd *z.psd /some/other/directory/*.psd
+CS $QUERIES/foo.q a*.psd *z.psd ~/some/other/directory/*.psd
 </pre>
 </blockquote>
 
-CorpusSearch can also be invoked without arguments.  It then prompts the
-user to enter the names of the command file and of the source file(s).
+CorpusSearch can also be invoked without any arguments.  It then prompts 
+the user to enter the names of the command file and of the source file(s).
 
 <a name="out-switch">
 <p>
 The search results are written to a file with the same basename as the
-query file, but with the extension <b>.out</b> ("foo.out" in the
-case at hand).
-
-<p>
-The basename of the output file (but not the extension) can be changed
-using an "-out" switch.  Not "-o", but "-out".
+query file, but with the extension <b>.out</b> ("foo.out" in the case 
+at hand).  The basename of the output file (but not the extension) can 
+be changed with an "-out" switch.  Not "-o", but "-out".
 
 <blockquote>
 <pre>
 CS foo.q bar.psd -out foo-on-bar.out
 
-CS foo.q *.psd -out all.out
+CS foo.q *.psd -out ALL.out
 </pre>
 </blockquote>
 
 <p>
-If CorpusSearch reports a run-time error because the underlying corpus is
-corrupted (for instance, because of mismatched parentheses), it sends an
-error message to the terminal screen by default.  Tracking down such
-errors generally requires redirecting the error message to a file.  The
-file is standardly called "ERR", but the name is up to the user.
+CorpusSearch reports any run-time errors in an error message, which by default 
+is sent to the terminal screen.  Tracking down the error(s) generally requires 
+redirecting the error message to a file.  For instance:
 
 <blockquote>
 <pre>
@@ -239,10 +237,20 @@ CS foo.q *.psd >& help-me-debug
 </blockquote>
 
 <p>
-Depending on the complexity of a query and the size of the input, searches
-can take from a few seconds to a few hours.  To run a search in the
-background under Unix/Linux, add an ampersand (&) at the end of
-your command:
+<table border cellpadding=5>
+<tr>
+<td><img src="hand.GIF">
+<td>For large input files,  ERR files can become huge, to the extent 
+that they fill up a disk (!).  The underlying problem is generally a 
+missing paren in the input.  See <a href="troubleshooting.html#mismatched-parens">Mismatched 
+parens</a> for troubleshooting advice.
+</table>
+
+<p>
+Depending on the complexity of a query and the size of the source file(s), 
+searches can take from a few seconds to a few hours.  To run a search in 
+the background under Unix/Linux, add an ampersand (&) at the end of your 
+command:
 
 <blockquote>
 <pre>

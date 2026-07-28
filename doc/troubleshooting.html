@@ -27,7 +27,8 @@
 <li><a href="pref.html#output" target="_new">Preference file not kicking in</a>
 <li><a href="#redundant-exists">Redundant "exists"</a>
 <li><a href="query-language.html#reg-exps" target="_new">Regular
-    expressions not giving expected results
+    expressions not giving expected results</a>
+<li><a href="#renumbered-zero-terminals">Renumbered zero terminals</a>
 <li><a href="#stalled-search">Stalled search</a>
 <li>Too few hits
     <ul>
@@ -417,6 +418,32 @@ same effect can therefore be obtained more simply with:
 query:     (NP-SBJ* iDoms ADJ)
 </pre>
 </blockquote>
+
+<a name="renumbered-zero-terminals">
+<h3>Renumbered zero terminals</h3>
+
+In the YCOE, the indices that
+relate <a href="https://penn-historical-corpora.uni-mannheim.de/ycoe/doc/annotation/YcoeRef.htm#complete_and_incomplete_clauses"
+target="_new">incomplete clauses</a> to their complete counterparts
+begin with "0" (that is, "0", "00", "000", etc.).  Running a revision
+query with copy_corpus set to "t" renumbers these indices, assigning
+whatever number is sequentially appropriate, starting with "1".  More
+seriously, at the same time, the "0 of silent terminals
+(complementizers, wh- antecedents, etc.) is also renumbered, resulting
+in nodes of the form <tt>(C&nbsp;2)</tt>, <tt>(WNP-2&nbsp;4)</tt>, and
+the like.
+
+<p> Various workarounds are possible.  The simplest is to replace "0" in
+silent terminals by an expression that does not occur in the corpus
+(say, <nobr>"--ZERO--").</nobr>  Another option is to replace the zero
+indices by indices that do not occur in the corpus (say, "99", "999",
+"9999").  As before, revision queries will replace the indices with
+initial "99", but at least not affect silent terminals.  Both
+workarounds are partial in the sense that what signals the relation
+between complete and incomplete clauses used to be a shared index
+starting with "0", whereas it is now only a shared index (which can
+still be queried
+with <tt><a href="search-functions.html#sameIndex">sameIndex</a></tt>).
 
 <a name="stalled-search">
 <h3>Stalled search</h3>
